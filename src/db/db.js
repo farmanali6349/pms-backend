@@ -1,9 +1,9 @@
 import { drizzle } from "drizzle-orm/node-postgres";
-import { dbUrl } from "../config/config";
+import { dbUrl } from "../config/config.js";
 
 if (!dbUrl) {
-  throw new Error("Database URL Mising");
+  throw new Error("Database URL Missing");
 }
 
-console.log("Connecting To DB");
 export const db = drizzle(dbUrl);
+console.log("Database client initialized");

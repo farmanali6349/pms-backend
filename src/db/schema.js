@@ -7,6 +7,7 @@ import {
   json,
   uniqueIndex,
   timestamp,
+  index,
 } from "drizzle-orm/pg-core";
 
 // USERS TABLE
@@ -20,21 +21,27 @@ export const users = pgTable("users", {
 });
 
 // WORKSPACE TABLE
-export const workspaces = pgTable("workspaces", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  name: varchar("name", { length: 128 }).notNull(),
-  slug: varchar("slug", { length: 128 }).notNull().unique(),
-  description: text("description"),
-  imageUrl: text("image_url").default(""),
-  settings: json("settings").default({}),
-  ownerId: integer("owner_id")
-    .notNull()
-    .references(() => users.id, {
-      onDelete: "cascade",
-    }),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
+export const workspaces = pgTable(
+  "workspaces",
+  {
+    id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+    name: varchar("name", { length: 128 }).notNull(),
+    slug: varchar("slug", { length: 128 }).notNull().unique(),
+    description: text("description"),
+    imageUrl: text("image_url").default(""),
+    settings: json("settings").default({}),
+    ownerId: integer("owner_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "cascade",
+      }),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (t) => ({
+    onwerIdx: index("workspace_owner_id_idx").on(t.ownerId),
+  })
+);
 
 // PROJECTS TABLE
 export const projects = pgTable("projects", {
@@ -121,7 +128,7 @@ export const workspaceMembers = pgTable(
   },
   (t) => ({
     uniqueMembers: uniqueIndex("ws_member_unique").on(t.userId, t.workspaceId),
-  }),
+  })
 );
 
 // 2. Project Member
@@ -137,9 +144,6 @@ export const projectMembers = pgTable(
       .references(() => projects.id, { onDelete: "cascade" }),
   },
   (t) => ({
-    uniqueMembers: uniqueIndex("project_member_unique").on(
-      t.userId,
-      t.projectId,
-    ),
-  }),
+    uniqueMembers: uniqueIndex("project_member_unique").on(t.userId, t.projectId),
+  })
 );

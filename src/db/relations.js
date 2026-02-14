@@ -39,6 +39,7 @@ export const projectRelations = relations(projects, ({ one, many }) => ({
     fields: [projects.teamLead],
     references: [users.id],
   }),
+  tasks: many(tasks),
   members: many(projectMembers),
 }));
 
@@ -68,19 +69,16 @@ export const commentsRelations = relations(comments, ({ one }) => ({
 }));
 
 // 6. Workspace Members Relations
-export const workspaceMembersRelations = relations(
-  workspaceMembers,
-  ({ one }) => ({
-    workspace: one(workspaces, {
-      fields: [workspaceMembers.workspaceId],
-      references: [workspaces.id],
-    }),
-    member: one(users, {
-      fields: [workspaceMembers.userId],
-      references: [users.id],
-    }),
+export const workspaceMembersRelations = relations(workspaceMembers, ({ one }) => ({
+  workspace: one(workspaces, {
+    fields: [workspaceMembers.workspaceId],
+    references: [workspaces.id],
   }),
-);
+  member: one(users, {
+    fields: [workspaceMembers.userId],
+    references: [users.id],
+  }),
+}));
 
 // 7. Project Members Relations
 export const projectMembersRelations = relations(projectMembers, ({ one }) => ({
