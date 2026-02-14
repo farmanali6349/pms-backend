@@ -56,7 +56,7 @@ export const projects = pgTable("projects", {
   teamLead: integer("team_lead")
     .notNull()
     .references(() => users.id, {
-      onDelete: "cascade",
+      onDelete: "set null",
     }),
   workspaceId: integer("workspace_id")
     .notNull()
@@ -78,7 +78,7 @@ export const tasks = pgTable("tasks", {
   assigneeId: integer("assignee_id")
     .notNull()
     .references(() => users.id, {
-      onDelete: "cascade",
+      onDelete: "set null",
     }),
   projectId: integer("project_id")
     .notNull()
