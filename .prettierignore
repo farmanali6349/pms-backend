@@ -1,0 +1,12 @@
+node_modules
+dist
+build
+coverage
+drizzle
+
+.env
+.env.*
+
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
