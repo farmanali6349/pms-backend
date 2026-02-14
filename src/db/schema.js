@@ -53,11 +53,9 @@ export const projects = pgTable("projects", {
   startTime: timestamp("start_time", { withTimezone: true }),
   endTime: timestamp("end_time", { withTimezone: true }),
   progress: integer("progress").default(0),
-  teamLead: integer("team_lead")
-    .notNull()
-    .references(() => users.id, {
-      onDelete: "set null",
-    }),
+  teamLead: integer("team_lead").references(() => users.id, {
+    onDelete: "set null",
+  }),
   workspaceId: integer("workspace_id")
     .notNull()
     .references(() => workspaces.id, {
@@ -75,11 +73,9 @@ export const tasks = pgTable("tasks", {
   status: smallint("status").default(0),
   type: smallint("type").default(0),
   priority: smallint("priority").default(0),
-  assigneeId: integer("assignee_id")
-    .notNull()
-    .references(() => users.id, {
-      onDelete: "set null",
-    }),
+  assigneeId: integer("assignee_id").references(() => users.id, {
+    onDelete: "set null",
+  }),
   projectId: integer("project_id")
     .notNull()
     .references(() => projects.id, {
