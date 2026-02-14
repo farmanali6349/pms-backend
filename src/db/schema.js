@@ -16,8 +16,8 @@ export const users = pgTable("users", {
   name: varchar("name", { length: 128 }).notNull(),
   email: varchar("email", { length: 128 }).notNull().unique(),
   image: text("image").default(""),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
 
 // WORKSPACE TABLE
@@ -35,11 +35,11 @@ export const workspaces = pgTable(
       .references(() => users.id, {
         onDelete: "cascade",
       }),
-    createdAt: timestamp("created_at").defaultNow(),
-    updatedAt: timestamp("updated_at").defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
   },
   (t) => ({
-    onwerIdx: index("workspace_owner_id_idx").on(t.ownerId),
+    ownerIdx: index("workspace_owner_id_idx").on(t.ownerId),
   })
 );
 
@@ -50,8 +50,8 @@ export const projects = pgTable("projects", {
   description: text("description"),
   priority: smallint("priority").default(0),
   status: smallint("status").default(0),
-  startTime: timestamp("start_time"),
-  endTime: timestamp("end_time"),
+  startTime: timestamp("start_time", { withTimezone: true }),
+  endTime: timestamp("end_time", { withTimezone: true }),
   progress: integer("progress").default(0),
   teamLead: integer("team_lead")
     .notNull()
@@ -63,8 +63,8 @@ export const projects = pgTable("projects", {
     .references(() => workspaces.id, {
       onDelete: "cascade",
     }),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
 
 // TASKS TABLE
@@ -85,9 +85,9 @@ export const tasks = pgTable("tasks", {
     .references(() => projects.id, {
       onDelete: "cascade",
     }),
-  dueDate: timestamp("due_date"),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  dueDate: timestamp("due_date", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
 
 // COMMENT TABLE
@@ -104,7 +104,7 @@ export const comments = pgTable("comments", {
     .references(() => tasks.id, {
       onDelete: "cascade",
     }),
-  createdAt: timestamp("created_at").defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
 // Junction Tables
