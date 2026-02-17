@@ -2,7 +2,7 @@ import { Inngest } from "inngest";
 import {
   clerkUserSchema,
   clerkUserDeleteSchema,
-  clerkUserUpdateSchema
+  clerkUserUpdateSchema,
 } from "../validation/clerk.js";
 import { db } from "../db/db.js";
 import { users } from "../db/schema.js";
@@ -49,23 +49,24 @@ const validateDeleteClerkPayload = (payload) => {
   const res = clerkUserDeleteSchema.safeParse(payload);
 
   if (!res.success) {
-    throw new Error("Invalid Delete User Payload" + res.error.message);
+    throw new Error("Invalid Delete User Payload " + res.error.message);
   }
 
   return res.data;
 };
 
-const upsertUser = async(data) => {
+const upsertUser = async (data) => {
   return await db
     .insert(users)
     .values(data)
     .onConflictDoUpdate({
-      target: [users.externalId, users.email],
+      target: users.externalId,
       set: {
         name: data.name,
+        email: data.email,
         image: data.image,
-        updatedAt: new Date().toISOString()
-      }
+        updatedAt: new Date().toISOString(),
+      },
     })
     .returning();
 };
@@ -74,7 +75,7 @@ const upsertUser = async(data) => {
 export const syncCreateUser = inngest.createFunction(
   { id: "sync-create-clerk-user" },
   { event: "clerk/user.create" },
-  async({ event }) => {
+  async ({ event }) => {
     try {
       // Validate Clerk User Payload
       // Normalize Data for User Creation
@@ -100,7 +101,7 @@ export const syncCreateUser = inngest.createFunction(
         name,
         email,
         image: clerkUserData.image_url || "",
-        externalId
+        externalId,
       };
 
       const parsedUserData = userSchema.safeParse(userData);
@@ -108,11 +109,11 @@ export const syncCreateUser = inngest.createFunction(
         throw new Error("Invalid user data: " + parsedUserData.error.message);
       }
 
-      const userResult = await upsertUser(userData);
+      const userResult = await upsertUser(parsedUserData.data);
       const user = Array.isArray(userResult) ? userResult[0] : userResult;
       return { success: true, id: user?.id, externalId: user?.externalId, userData: user };
     } catch (error) {
-      console.error("syncUpdateUser error, payload id:", event?.data?.id, error);
+      console.error("syncUpdateUser error, payload id: ", event?.data?.id, error);
       throw error;
     }
   }
@@ -122,7 +123,7 @@ export const syncCreateUser = inngest.createFunction(
 export const syncDeleteUser = inngest.createFunction(
   { id: "sync-delete-clerk-user" },
   { event: "clerk/user.delete" },
-  async({ event }) => {
+  async ({ event }) => {
     try {
       // Validate Clerk User Payload
       const clerkUserData = validateDeleteClerkPayload(event.data);
@@ -139,7 +140,7 @@ export const syncDeleteUser = inngest.createFunction(
 
       return { success: true, deleted, externalId, rows: queryRes.length ?? (deleted ? 1 : 0) };
     } catch (error) {
-      console.error("syncDeleteUser error, payload id:", event?.data?.id, error);
+      console.error("syncDeleteUser error, payload id: ", event?.data?.id, error);
       throw error;
     }
   }
@@ -149,7 +150,7 @@ export const syncDeleteUser = inngest.createFunction(
 export const syncUpdateUser = inngest.createFunction(
   { id: "sync-update-clerk-user" },
   { event: "clerk/user.update" },
-  async({ event }) => {
+  async ({ event }) => {
     try {
       // Validate Clerk User Payload
       // Normalize Data for User Creation
@@ -189,7 +190,7 @@ export const syncUpdateUser = inngest.createFunction(
 
       const queryRes = await db
         .update(users)
-        .set({ ...userUpdateData })
+        .set({ ...parsedUserData })
         .where(eq(users.externalId, externalId))
         .returning();
 
@@ -199,7 +200,7 @@ export const syncUpdateUser = inngest.createFunction(
       }
       return { success: true, id: user?.id, externalId: user?.externalId, userData: user };
     } catch (error) {
-      console.error("syncUpdateUser error, payload id:", event?.data?.id, error);
+      console.error("syncUpdateUser error, payload id: ", event?.data?.id, error);
       throw error;
     }
   }

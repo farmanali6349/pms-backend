@@ -81,6 +81,9 @@ backend/
 │   │   └── schema.js       # Drizzle ORM database schema
 │   └── inngest/            # Inngest serverless functions
 │       └── index.js        # Inngest client and function definitions
+│   └── validation/         # Zod validation schemas
+│       ├── clerk.js        # Clerk webhook payload schemas
+│       └── validation.js   # Entity validation schemas
 └── README.md               # This file
 ```
 
