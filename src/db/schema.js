@@ -7,7 +7,7 @@ import {
   json,
   uniqueIndex,
   timestamp,
-  index,
+  index
 } from "drizzle-orm/pg-core";
 
 // USERS TABLE
@@ -15,9 +15,10 @@ export const users = pgTable("users", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   name: varchar("name", { length: 128 }).notNull(),
   email: varchar("email", { length: 128 }).notNull().unique(),
+  externalId: varchar("external_id", { length: 128 }).unique(),
   image: text("image").default(""),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow()
 });
 
 // WORKSPACE TABLE
@@ -33,13 +34,13 @@ export const workspaces = pgTable(
     ownerId: integer("owner_id")
       .notNull()
       .references(() => users.id, {
-        onDelete: "cascade",
+        onDelete: "cascade"
       }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow()
   },
   (t) => ({
-    ownerIdx: index("workspace_owner_id_idx").on(t.ownerId),
+    ownerIdx: index("workspace_owner_id_idx").on(t.ownerId)
   })
 );
 
@@ -54,15 +55,15 @@ export const projects = pgTable("projects", {
   endTime: timestamp("end_time", { withTimezone: true }),
   progress: integer("progress").default(0),
   teamLead: integer("team_lead").references(() => users.id, {
-    onDelete: "set null",
+    onDelete: "set null"
   }),
   workspaceId: integer("workspace_id")
     .notNull()
     .references(() => workspaces.id, {
-      onDelete: "cascade",
+      onDelete: "cascade"
     }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow()
 });
 
 // TASKS TABLE
@@ -74,16 +75,16 @@ export const tasks = pgTable("tasks", {
   type: smallint("type").default(0),
   priority: smallint("priority").default(0),
   assigneeId: integer("assignee_id").references(() => users.id, {
-    onDelete: "set null",
+    onDelete: "set null"
   }),
   projectId: integer("project_id")
     .notNull()
     .references(() => projects.id, {
-      onDelete: "cascade",
+      onDelete: "cascade"
     }),
   dueDate: timestamp("due_date", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow()
 });
 
 // COMMENT TABLE
@@ -93,14 +94,14 @@ export const comments = pgTable("comments", {
   userId: integer("user_id")
     .notNull()
     .references(() => users.id, {
-      onDelete: "cascade",
+      onDelete: "cascade"
     }),
   taskId: integer("task_id")
     .notNull()
     .references(() => tasks.id, {
-      onDelete: "cascade",
+      onDelete: "cascade"
     }),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow()
 });
 
 // Junction Tables
@@ -113,17 +114,17 @@ export const workspaceMembers = pgTable(
     userId: integer("user_id")
       .notNull()
       .references(() => users.id, {
-        onDelete: "cascade",
+        onDelete: "cascade"
       }),
     workspaceId: integer("workspace_id")
       .notNull()
       .references(() => workspaces.id, {
-        onDelete: "cascade",
+        onDelete: "cascade"
       }),
-    role: smallint("role").default(0),
+    role: smallint("role").default(0)
   },
   (t) => ({
-    uniqueMembers: uniqueIndex("ws_member_unique").on(t.userId, t.workspaceId),
+    uniqueMembers: uniqueIndex("ws_member_unique").on(t.userId, t.workspaceId)
   })
 );
 
@@ -137,9 +138,9 @@ export const projectMembers = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
     projectId: integer("project_id")
       .notNull()
-      .references(() => projects.id, { onDelete: "cascade" }),
+      .references(() => projects.id, { onDelete: "cascade" })
   },
   (t) => ({
-    uniqueMembers: uniqueIndex("project_member_unique").on(t.userId, t.projectId),
+    uniqueMembers: uniqueIndex("project_member_unique").on(t.userId, t.projectId)
   })
 );
