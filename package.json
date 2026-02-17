@@ -11,7 +11,8 @@
     "dev": "nodemon server.js",
     "generate-db": "npx drizzle-kit generate",
     "migrate-db": "npx drizzle-kit migrate",
-    "studio": "npx drizzle-kit studio"
+    "studio": "npx drizzle-kit studio",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@clerk/express": "^1.7.70",
@@ -19,7 +20,9 @@
     "dotenv": "^17.3.1",
     "drizzle-orm": "^0.45.1",
     "express": "^5.2.1",
-    "pg": "^8.18.0"
+    "inngest": "^3.52.0",
+    "pg": "^8.18.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "drizzle-kit": "^0.31.9",
