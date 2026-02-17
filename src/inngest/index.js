@@ -92,7 +92,7 @@ export const syncCreateUser = inngest.createFunction(
       );
 
       if (!name) {
-        throw new Error("Name is not avaialable in clerk user payload");
+        throw new Error("Name is not available in clerk user payload");
       }
 
       const externalId = clerkUserData.id;
@@ -153,7 +153,7 @@ export const syncUpdateUser = inngest.createFunction(
   async ({ event }) => {
     try {
       // Validate Clerk User Payload
-      // Normalize Data for User Creation
+      // Normalize Data for User Updation
 
       const clerkUserData = validateUpdateClerkPayload(event.data);
       const userUpdateData = {};
@@ -190,7 +190,7 @@ export const syncUpdateUser = inngest.createFunction(
 
       const queryRes = await db
         .update(users)
-        .set({ ...parsedUserData })
+        .set({ ...parsedUserData.data })
         .where(eq(users.externalId, externalId))
         .returning();
 

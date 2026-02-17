@@ -23,4 +23,4 @@ export const clerkUserDeleteSchema = z.object({
 export const clerkUserUpdateSchema = clerkUserSchema
   .extend({ updatedAt: z.iso.datetime().default(() => new Date().toISOString()) })
   .partial()
-  .required({ externalId: true });
+  .required({ id: true });
