@@ -74,7 +74,7 @@ const upsertUser = async (data) => {
 // Sync User Creation
 export const syncCreateUser = inngest.createFunction(
   { id: "sync-create-clerk-user" },
-  { event: "user.created" },
+  { event: "clerk/user.created" },
   async ({ event }) => {
     try {
       // Validate Clerk User Payload
@@ -122,7 +122,7 @@ export const syncCreateUser = inngest.createFunction(
 // Sync User Deletion
 export const syncDeleteUser = inngest.createFunction(
   { id: "sync-delete-clerk-user" },
-  { event: "user.deleted" },
+  { event: "clerk/user.deleted" },
   async ({ event }) => {
     try {
       // Validate Clerk User Payload
@@ -149,7 +149,7 @@ export const syncDeleteUser = inngest.createFunction(
 // Sync User Updation
 export const syncUpdateUser = inngest.createFunction(
   { id: "sync-update-clerk-user" },
-  { event: "user.updated" },
+  { event: "clerk/user.updated" },
   async ({ event }) => {
     try {
       // Validate Clerk User Payload
