@@ -65,7 +65,7 @@ const upsertUser = async (data) => {
         name: data.name,
         email: data.email,
         image: data.image,
-        updatedAt: new Date().toISOString(),
+        updatedAt: new Date(),
       },
     })
     .returning();
@@ -181,7 +181,7 @@ export const syncUpdateUser = inngest.createFunction(
         userUpdateData.image = clerkUserData?.image_url;
       }
 
-      userUpdateData.updatedAt = new Date().toISOString();
+      userUpdateData.updatedAt = new Date();
       const parsedUserData = userUpdateSchema.safeParse(userUpdateData);
 
       if (!parsedUserData.success) {

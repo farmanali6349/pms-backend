@@ -20,7 +20,4 @@ export const clerkUserDeleteSchema = z.object({
   id: z.union([z.uuid(), z.string()]),
 });
 
-export const clerkUserUpdateSchema = clerkUserSchema
-  .extend({ updatedAt: z.iso.datetime().default(() => new Date().toISOString()) })
-  .partial()
-  .required({ id: true });
+export const clerkUserUpdateSchema = clerkUserSchema.partial().required({ id: true });
