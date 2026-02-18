@@ -64,27 +64,12 @@ export const commentSchema = z.object({
 });
 
 // UPDATE SCHEMAS FOR EACH
-export const userUpdateSchema = userSchema
-  .omit({ externalId: true, createdAt: true })
-  .extend({ updatedAt: z.iso.datetime().default(() => new Date().toISOString()) })
-  .partial();
+export const userUpdateSchema = userSchema.omit({ externalId: true }).partial();
 
-export const workspaceUpdateSchema = workspaceSchema
-  .omit({ id: true, createdAt: true })
-  .extend({ updatedAt: z.iso.datetime().default(() => new Date().toISOString()) })
-  .partial();
+export const workspaceUpdateSchema = workspaceSchema.omit({ id: true }).partial();
 
-export const projectUpdateSchema = projectSchema
-  .omit({ id: true, createdAt: true })
-  .extend({ updatedAt: z.iso.datetime().default(() => new Date().toISOString()) })
-  .partial();
+export const projectUpdateSchema = projectSchema.omit({ id: true }).partial();
 
-export const taskUpdateSchema = taskSchema
-  .omit({ createdAt: true })
-  .extend({ updatedAt: z.iso.datetime().default(() => new Date().toISOString()) })
-  .partial();
+export const taskUpdateSchema = taskSchema.omit({ id: true }).partial();
 
-export const commentUpdateSchema = commentSchema
-  .omit({ createdAt: true })
-  .extend({ updatedAt: z.iso.datetime().default(() => new Date().toISOString()) })
-  .partial();
+export const commentUpdateSchema = commentSchema.omit({ id: true }).partial();

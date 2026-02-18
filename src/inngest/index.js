@@ -49,6 +49,8 @@ const validateDeleteClerkPayload = (payload) => {
   const res = clerkUserDeleteSchema.safeParse(payload);
 
   if (!res.success) {
+    console.error("Validation Fails for CLERK Payload received in USER UPDATE function :: ISSUES");
+    console.log(JSON.stringify(res.error.issues));
     throw new Error("Invalid Delete User Payload " + res.error.message);
   }
 
@@ -76,8 +78,6 @@ export const syncCreateUser = inngest.createFunction(
   { id: "sync-create-clerk-user" },
   { event: "clerk/user.created" },
   async ({ event }) => {
-    console.log("This is function is called");
-    console.log(JSON.stringify(event));
     try {
       // Validate Clerk User Payload
       // Normalize Data for User Creation
@@ -160,7 +160,7 @@ export const syncUpdateUser = inngest.createFunction(
       const clerkUserData = validateUpdateClerkPayload(event.data);
       const userUpdateData = {};
       const email = getPrimaryEmail(clerkUserData);
-      const externalId = clerkUserData.id;
+      const externalId = clerkUserData?.id;
 
       if (!externalId) {
         throw new Error("Id is not present.");
@@ -175,6 +175,7 @@ export const syncUpdateUser = inngest.createFunction(
         clerkUserData.last_name,
         clerkUserData.full_name
       );
+
       if (name) {
         userUpdateData.name = name;
       }
@@ -183,7 +184,6 @@ export const syncUpdateUser = inngest.createFunction(
         userUpdateData.image = clerkUserData?.image_url;
       }
 
-      userUpdateData.updatedAt = new Date();
       const parsedUserData = userUpdateSchema.safeParse(userUpdateData);
 
       if (!parsedUserData.success) {
@@ -192,7 +192,7 @@ export const syncUpdateUser = inngest.createFunction(
 
       const queryRes = await db
         .update(users)
-        .set({ ...parsedUserData.data })
+        .set({ ...parsedUserData.data, updatedAt: new Date() })
         .where(eq(users.externalId, externalId))
         .returning();
 
@@ -207,5 +207,6 @@ export const syncUpdateUser = inngest.createFunction(
     }
   }
 );
+
 // Create an empty array where we'll export future Inngest functions
 export const functions = [syncCreateUser, syncDeleteUser, syncUpdateUser];
