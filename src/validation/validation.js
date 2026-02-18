@@ -14,14 +14,6 @@ export const userSchema = z.object({
     .max(128, "You cannot exceed 128 characters in the email"),
   externalId: z.string().max(128, "External ID can't have more than 128 characters").optional(),
   image: z.string().default(""),
-  createdAt: z.iso
-    .datetime()
-    .default(() => new Date().toISOString())
-    .optional(),
-  updatedAt: z.iso
-    .datetime()
-    .default(() => new Date().toISOString())
-    .optional(),
 });
 
 // WORKSPACE SCHEMA
@@ -36,14 +28,6 @@ export const workspaceSchema = z.object({
   imageUrl: z.string().default(""),
   settings: z.json().default({}),
   ownerId: z.coerce.number().positive(),
-  createdAt: z.iso
-    .datetime()
-    .default(() => new Date().toISOString())
-    .optional(),
-  updatedAt: z.iso
-    .datetime()
-    .default(() => new Date().toISOString())
-    .optional(),
 });
 
 // PROJECT SCHEMA
@@ -58,14 +42,6 @@ export const projectSchema = z.object({
   progress: z.coerce.number().min(0).max(100).default(0),
   teamLead: z.coerce.number().positive(),
   workspaceId: z.coerce.number().positive(),
-  createdAt: z.iso
-    .datetime()
-    .default(() => new Date().toISOString())
-    .optional(),
-  updatedAt: z.iso
-    .datetime()
-    .default(() => new Date().toISOString())
-    .optional(),
 });
 
 // TASK SCHEMA
@@ -78,14 +54,6 @@ export const taskSchema = z.object({
   assigneeId: z.coerce.number().positive(),
   projectId: z.coerce.number().positive(),
   dueDate: z.iso.datetime().optional(),
-  createdAt: z.iso
-    .datetime()
-    .default(() => new Date().toISOString())
-    .optional(),
-  updatedAt: z.iso
-    .datetime()
-    .default(() => new Date().toISOString())
-    .optional(),
 });
 
 // COMMENT SCHEMA
@@ -93,10 +61,6 @@ export const commentSchema = z.object({
   content: z.string(),
   userId: z.coerce.number().positive(),
   taskId: z.coerce.number().positive(),
-  createdAt: z.iso
-    .datetime()
-    .default(() => new Date().toISOString())
-    .optional(),
 });
 
 // UPDATE SCHEMAS FOR EACH

@@ -76,6 +76,8 @@ export const syncCreateUser = inngest.createFunction(
   { id: "sync-create-clerk-user" },
   { event: "clerk/user.created" },
   async ({ event }) => {
+    console.log("This is function is called");
+    console.log(JSON.stringify(event));
     try {
       // Validate Clerk User Payload
       // Normalize Data for User Creation
